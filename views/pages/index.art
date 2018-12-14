@@ -1,0 +1,12 @@
+<% extend('../partials/layout') -%>
+
+{{block 'content'}}
+
+<main class="container">
+    <div class="jumbotron">
+        <h1>This site is still a work in progress.</h1>
+        <p></p>
+    </div>
+</main>
+
+{{/block}}

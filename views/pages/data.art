@@ -1,0 +1,11 @@
+<% extend('../partials/layout') -%>
+
+{{block 'content'}}
+
+<main class="container">
+    <div class="jumbotron py-3 px-3">
+        <% include('./data_term.art') %>
+    </div>
+</main>
+
+{{/block}}

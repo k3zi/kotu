@@ -1,0 +1,25 @@
+<% extend('../partials/layout') -%>
+
+{{block 'content'}}
+
+<main class="container">
+    <div class="jumbotron py-3 px-3">
+        <h3>
+        {{each result}}
+            <a href="#" class="furiganaText term-popover" data-trigger="focus" tabindex="0" data-container="body" data-toggle="popover" data-placement="bottom" title="<%= $value.data.original + '：' + $value.data.lexical + ($value.data.compound != '*' ? ('・' + $value.data.compound) : '') %>" data-content="<div class='list-group'>{{each $value.results}}<a href='#' class='list-group-item list-group-item-action flex-column align-items-start'><div class='d-flex w-100 justify-content-between'><h6 class='mb-1'><%= [].concat.apply([], $value.sense.map(x => x.gloss)).join(', ') %></h6></div><p class='mb-1'><%= [].concat.apply(!$value.k_ele ? [] : $value.k_ele.map(x => x.keb), !$value.r_ele ? [] : $value.r_ele.map(x => x.reb)).join(', ') %></p></a>{{/each}}</div>">
+                {<%= $value.data.kanji %>,<%= $value.data.pronunciation %>}
+            </a>
+        {{/each}}
+        </h3>
+    </div>
+</main>
+
+{{/block}}
+
+{{block 'scripts'}}
+
+$('.term-popover').popover({
+    html: true
+});
+
+{{/block}}

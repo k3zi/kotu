@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="コツ">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/manifest.json">
+
+    <title>コツ<%= typeof title !== 'undefined' ? ' | ' + title : '' %></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/evil-icons.css" rel="stylesheet">
+    <link href="/css/gijgo.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true" data-bind="with: login">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalModalLabel">ログイン</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="loginForm" data-bind="hidden: success().length">
+                        <div class="form-group">
+                            <label for="loginUsernameEmailInput">Ｅメール・ユーザー名</label>
+                            <input type="text" name="username" autocomplete="username" class="form-control" id="loginUsernameEmailInput" aria-describedby="emailHelp" placeholder="Enter email/username" data-bind="disable: isLoading">
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPasswordInput">パスワード</label>
+                            <input type="password" name="password" autocomplete="current-password" class="form-control" id="loginPasswordInput" placeholder="Enter password" data-bind="disable: isLoading">
+                        </div>
+                    </form>
+
+                    <div class="alert alert-danger text-center" role="alert" data-bind="visible: error().length, html: error"></div>
+                    <div class="alert alert-success text-center" role="alert" data-bind="visible: success().length, html: success"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bind="disable: isLoading">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-bind="click: submit, disable: isLoading">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registerModalLabel">登録</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="registerUsernameInput">ユーザー名</label>
+                            <input type="text" name="username" autocomplete="username" class="form-control" id="registerUsernameInput" placeholder="Enter desired username">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmailInput">Ｅメール</label>
+                            <input type="email" name="email" autocomplete="email" class="form-control" id="registerEmailInput" placeholder="Enter email">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPasswordInput">パスワード</label>
+                            <input type="password" name="password" autocomplete="new-password" class="form-control" id="registerPasswordInput" placeholder="Enter password">
+                        </div>
+                        <div class="form-group">
+                            <label for="registerNcknameInput">ニックネーム</label>
+                            <input type="text" name="nickname" autocomplete="nickname" class="form-control" id="registerNcknameInput" placeholder="Enter nickname">
+                        </div>
+                    </form>
+
+                    <div class="alert alert-danger text-center" role="alert" data-bind="visible: register.error().length, html: register.error"></div>
+                    <div class="alert alert-success text-center" role="alert" data-bind="visible: register.success().length, html: register.success"></div>
+                </div>
+                <div class="modal-footer" data-bind="hidden: register.success().length">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-bind="click: register.submit">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="site-header sticky-top navbar navbar-expand-sm navbar-dark flex-wrap">
+         <a class="navbar-brand px-2 py-1" href="/">コツ： 日本語・英語</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="flex-grow w-75 position-relative">
+            <input id="searchInput" v-model="searchText" data-bind="textInput: search.input, css: { 'rb-0': search.isDisplaying }" class="form-control form-control-md fill-width" type="text" placeholder="Search English / 日本語">
+            <div class="list-group fill-width position-absolute">
+                <!-- ko if: search.input().length -->
+                    <a class="list-group-item list-group-item-action flex-column align-items-start rt-0" data-bind="attr: { href: '/data/sentence/' + encodeURIComponent(search.input()) }">
+                        <div class="d-flex w-100 justify-content-between">Parse Sentence <span class="float-right">→</span></div>
+                    </a>
+                <!-- /ko -->
+                <!-- ko if: search.loading -->
+                <div class="list-group-item list-group-item-action rt-0">
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                    </div>
+                </div>
+                <!-- else -->
+                <!-- ko foreach: search.results -->
+                    <a class="list-group-item list-group-item-action flex-column align-items-start rt-0" data-bind="attr: { href: link }">
+                        <div class="d-flex w-100 justify-content-between" data-bind="text: title"></div>
+                        <!-- ko if: subtitle.length -->
+                        <small data-bind="text: subtitle"></small>
+                        <!-- /ko -->
+                    </a>
+                    <!-- /ko -->
+                <!-- /ko -->
+            </div>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <div class="form-inline flex-grow myi-2 my-lg-0 flex-row-reverse">
+                <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#loginModal">ログイン</button>
+                <button type="button" class="btn btn-secondary mx-2" data-toggle="modal" data-target="#registerModal">登録</button>
+            </div>
+        </div>
+    </nav>
+
+    {{block 'content'}}{{/block}}
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/tko.min.js"></script>
+    <script src="/js/autocomplete.min.js"></script>
+    <script src="/js/gijgo.min.js"></script>
+    <script src="/js/jquery.rubyann.js"></script>
+    <script src="/js/evil-icons.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.10/lodash.min.js" integrity="sha256-/GKyJ0BQJD8c8UYgf7ziBrs/QgcikS7Fv/SaArgBcEI=" crossorigin="anonymous"></script>
+
+    <script>
+    $(function() {
+        view = {
+        };
+
+        view.user = ko.observable(false);
+
+        // Search View
+        view.search = {
+            results: ko.observableArray([]),
+            input: ko.observable(''),
+            loading: ko.observable(0),
+            isLoading: ko.pureComputed(() => view.search.loading() > 0),
+            previousRequest: ko.observable(),
+            isDisplaying: ko.pureComputed(() => {
+                console.log(this);
+                return view.search.isLoading() || view.search.input().length;
+            }),
+            resultMapping: data => {
+                return data;
+            }
+        };
+
+        view.search.inputRateLimited = ko.pureComputed(view.search.input).extend({
+            rateLimit: {
+                method: "notifyWhenChangesStop",
+                timeout: 800
+            }
+        });
+
+        view.search.inputRateLimited.subscribe(val => {
+            console.log(this);
+            if (!val || !val.length) {
+                return view.search.results([]);
+            }
+
+            let searchId = view.search.loading() + 1;
+            view.search.loading(searchId);
+
+            let prevReq = view.search.previousRequest();
+            if (prevReq && prevReq.readyState != 4) {
+                prevReq.abort();
+            }
+
+            $.get("/api/data/search/" + val, data => {
+                if (view.search.loading() != searchId) {
+                    return;
+                }
+
+                view.search.loading(0);
+                view.search.results(data.result.map(view.search.resultMapping));
+            });
+        }, view.search);
+
+        // Login View
+        view.login = {
+            error: ko.observable(''),
+            success: ko.observable(''),
+            loading: ko.observable(0),
+            isLoading: ko.pureComputed(() => view.search.loading() > 0),
+            submit: () => {
+                let self = view.login;
+                self.error('');
+                self.success('');
+
+                let loadingId = self.loading() + 1;
+                self.loading(loadingId);
+
+                $.post("/api/auth/login", $("#loginForm").serialize(), data => {
+                    console.log(data);
+                    if (data.success) {
+                        self.success(data.message);
+                    }
+                }).fail((xhr, status, error) => {
+                    if (_.isString(xhr.responseJSON)) {
+                        self.error(xhr.responseJSON);
+                    } else if (_.isArray(xhr.responseJSON)) {
+                        let list = xhr.responseJSON.map(error => `<strong>${error.param}</strong>: ${error.msg} but saw '${error.value}'.`);
+                        list.unshift('Error(s) proccesing request:');
+                        self.error(list.join("<br />"));
+                    } else {
+                        self.error(error);
+                    }
+                }).always(() => {
+                    if (self.loading() == loadingId) {
+                        self.loading(0);
+                    }
+                });
+            }
+        };
+
+        // Register View
+        view.register = {
+            error: ko.observable(''),
+            success: ko.observable(''),
+            submit: () => {
+                view.register.error('');
+                view.register.success('');
+
+                $.post("/api/auth/register", $("#registerForm").serialize(), data => {
+                    console.log(data);
+                    if (data.success) {
+                        view.register.success(data.message);
+                    }
+                }).fail((xhr, status, error) => {
+                    if (_.isString(xhr.responseJSON)) {
+                        view.register.error(xhr.responseJSON);
+                    } else if (_.isArray(xhr.responseJSON)) {
+                        let list = xhr.responseJSON.map(error => `<strong>${error.param}</strong>: ${error.msg} but saw '${error.value}'.`);
+                        list.unshift('Error(s) proccesing request:');
+                        view.register.error(list.join("<br />"));
+                    } else {
+                        view.register.error(error);
+                    }
+                });
+            }
+        };
+
+        $(".editor").editor({
+            uiLibrary: 'bootstrap4',
+            height: 300
+        });
+
+        {{block 'scripts'}}{{/block}}
+
+        $('.furiganaText').rubyann();
+
+        $('.playAudioInBackground').click(function (e) {
+            let audio = document.createElement("audio");
+            let src = document.createElement("source");
+            src.src = this.href;
+            src.type = 'audio/mpeg';
+            audio.appendChild(src);
+            audio.play();
+            e.preventDefault();
+        });
+
+        // Apply the bindings
+        ko.applyBindings(view);
+    });
+    </script>
+</body>
+</html>

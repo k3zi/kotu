@@ -1,0 +1,316 @@
+<% extend('../../partials/layout') -%>
+
+{{block 'content'}}
+<div class="modal fade" id="editAccentModal" tabindex="-1" role="dialog" aria-labelledby="editAccentModal" aria-hidden="true" data-bind="with: accents">
+    <div class="modal-dialog modal-lg" role="document" data-bind="if: selectedAccent">
+        <div class="modal-content" data-bind="with: selectedAccent">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Accent: <span data-bind="text: id"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <h4 class="col-form-label">Maps To Entry ID:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: accentEntryId, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Accent: <a class="float-right" href="#" data-bind="click: $parent.addAccent"><i class="fas fa-plus"></i> Add</a></h4>
+                        <!-- ko foreach: accent -->
+                        <!-- ko if: $index()  && $index() !== 0 -->
+                        <hr />
+                        <!-- /ko -->
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" data-bind="textInput: accentString, attr: { readonly: $parents[1] && $parents[1].loading() }">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-bind="click: => $parents[1].deleteAccent($parent, $index())"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                        <small class="form-text text-muted">
+                            Seperate each accent phrase in its own box.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Katakana:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: kana, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Often Seen As: <a class="float-right" href="#" data-bind="click: $parent.addKanji"><i class="fas fa-plus"></i> Add</a></h4>
+                        <!-- ko foreach: kanji -->
+                        <!-- ko if: $index()  && $index() !== 0 -->
+                        <hr />
+                        <!-- /ko -->
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" data-bind="textInput: $rawData, attr: { readonly: $parents[1] && $parents[1].loading() }">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-bind="click: => $parents[1].deleteKanji($parent, $index())"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Full Kanji:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: fullKanji, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Expression:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: expression, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Notes: <a class="float-right" href="#" data-bind="click: $parent.addNote"><i class="fas fa-plus"></i> Add</a></h4>
+                        <!-- ko foreach: notes -->
+                        <!-- ko if: $index()  && $index() !== 0 -->
+                        <hr />
+                        <!-- /ko -->
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" data-bind="textInput: $rawData, attr: { readonly: $parents[1] && $parents[1].loading() }">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-bind="click: => $parents[1].deleteNote($parent, $index())"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Sources: <a class="float-right" href="#" data-bind="click: $parent.addSource"><i class="fas fa-plus"></i> Add</a></h4>
+                        <!-- ko foreach: sources -->
+                        <!-- ko if: $index()  && $index() !== 0 -->
+                        <hr />
+                        <!-- /ko -->
+
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" data-bind="textInput: $rawData, attr: { readonly: $parents[1] && $parents[1].loading() }">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" data-bind="click: => $parents[1].deleteSource($parent, $index())"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="updateAccentAccurate" data-bind="checked: accurate">
+                        <label class="custom-control-label" for="updateAccentAccurate">Accurate</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal", data-bind="disable: $parent.loading">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bind="click: $parent.update, disable: $parent.loading">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteAccentModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccentModal" aria-hidden="true" data-bind="with: accents">
+    <div class="modal-dialog modal-lg" role="document" data-bind="if: selectedAccent">
+        <div class="modal-content" data-bind="with: selectedAccent">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Accent: <span data-bind="text: id"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"
+                <p>Please confirm the deletion of this accent. An audit log is kept for possible recovery.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal", data-bind="disable: $parent.loading">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bind="click: $parent.confirmDelete, disable: $parent.loading">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="mx-5" data-bind="with: accents">
+    <div class="jumbotron py-3 px-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control mr-3" placeholder="Filter results by kanji / kana" data-bind="textInput: filter">
+            <button type="button" class="btn btn-primary" data-bind="click: add, disable: loading"><i class="fas fa-plus"></i> Add Accent</button>
+        </div>
+
+        <table class="table table-hover table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="text-center" scope="col"></th>
+                    <th class="text-center" scope="col">Entry</th>
+                    <th class="text-center" class="text-center" scope="col">Accent</th>
+                    <th class="text-center" scope="col">Katakana</th>
+                    <th class="text-center" scope="col">OSA</th>
+                    <th class="text-center" scope="col">Full Kanji</th>
+                    <th class="text-center" scope="col">Expression</th>
+                    <th class="text-center" scope="col">Notes</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: results">
+                <tr>
+                    <td class="text-center align-middle">
+                        <a href="#" data-bind="click: $parent.edit"><i class="far fa-edit"></i></a>
+                        <hr class="my-1" />
+                        <a href="#" data-bind="click: $parent.delete"><i class="far fa-trash-alt"></i></a>
+                    </td>
+                    <th class="text-center align-middle" scope="row" data-bind="if: accentEntryId">
+                        <a data-bind="attr: { href: '/data/term/' + accentEntryId }"><i class="fas fa-external-link-alt"></i></a>
+                    </th>
+                    <td class="text-center align-middle" data-bind="html: $parent.parseAccent(accent)"></td>
+                    <td class="text-center align-middle" data-bind="text: kana"></td>
+                    <td class="text-center align-middle" data-bind="html: kanji.join('<hr />')"></td>
+                    <td class="text-center align-middle" data-bind="text: fullKanji"></td>
+                    <td class="text-center align-middle" data-bind="text: expression"></td>
+                    <td class="text-center align-middle" data-bind="html: notes.join('<hr />')"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+{{/block}}
+
+{{block 'scripts'}}
+
+view.accents = {
+    page: ko.observable(1),
+    pages: ko.observable(0),
+    pageDidLoad: function () {
+        view.accents.loadPage(1);
+    },
+    parseAccent: function (accent) {
+        return accent.map(a => a.accentString.replace('*', '&#12442;')).join('・');
+    },
+    loadPage: function (page, search) {
+        view.accents.page(page);
+
+        let limit = 15;
+        let offset = (view.accents.page() - 1) * 15;
+        $.get('/api/data/accents/' + offset + '/' + limit + (search ? ('/' + search) : '')).done(data => {
+            view.accents.results(data.result);
+            view.accents.pages(data.pages);
+        });
+    },
+    loading: ko.observable(false),
+    results: ko.observableArray([]),
+    selectedAccent: ko.observable(false),
+    selectAccent: function (data) {
+        let clone = _.cloneDeep(data);
+        clone.accent = ko.observableArray(clone.accent);
+        clone.kanji = ko.observableArray(clone.kanji.map(x => ko.observable(x)));
+        clone.notes = ko.observableArray(clone.notes.map(x => ko.observable(x)));
+        clone.sources = ko.observableArray(clone.sources.map(x => ko.observable(x)));
+        view.accents.selectedAccent(clone);
+    },
+    edit: function (data) {
+        view.accents.selectAccent(data);
+        $('#editAccentModal').modal('show');
+    },
+    add: function () {
+        $.get('/api/data/accents/create').done(data => {
+            view.accents.edit(data.result);
+        }).always(_ => {
+            view.accents.loading(false);
+        });
+    },
+    filter: ko.observable(''),
+    update: function (updatedValue) {
+        updatedValue = ko.toJS(updatedValue);
+        view.accents.loading(true);
+        fetch('/api/data/accents/' + updatedValue.id, {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedValue)
+        }).then(response => response.json()).then(data => {
+            view.accents.selectedAccent(false);
+            let oldData = view.accents.results().filter(x => {
+                return x.id === data.result.id;
+            })[0];
+
+            if (oldData) {
+                view.accents.results.replace(oldData, data.result);
+            }
+
+            $('#editAccentModal').modal('hide');
+        }).finally(_ => {
+            view.accents.loading(false);
+        });
+    },
+    delete: function (data) {
+        view.accents.selectAccent(data);
+        $('#deleteAccentModal').modal('show');
+    },
+    confirmDelete: function (updatedValue) {
+        updatedValue = ko.toJS(updatedValue);
+        view.accents.loading(true);
+        $.delete('/api/data/accents/' + updatedValue.id).done(data => {
+            view.accents.selectedAccent(false);
+            let oldData = view.accents.results().filter(x => {
+                return x.id === data.result.id;
+            })[0];
+
+            if (oldData) {
+                view.accents.results.remove(oldData);
+            }
+
+            $('#deleteAccentModal').modal('hide');
+        }).always(_ => {
+            view.accents.loading(false);
+        });
+    },
+    addAccent: function (data) {
+        data.accent.push({
+            accentString: '',
+            accentNumber: 0
+        });
+    },
+    deleteAccent: function (data, index) {
+        data.accent.splice(index, 1);
+    },
+    addSource: function (data) {
+        data.sources.push(ko.observable(''));
+    },
+    deleteSource: function (data, index) {
+        data.sources.splice(index, 1);
+    },
+    addNote: function (data) {
+        data.notes.push(ko.observable(''));
+    },
+    deleteNote: function (data, index) {
+        data.notes.splice(index, 1);
+    },
+    addKanji: function (data) {
+        data.kanji.push(ko.observable(''));
+    },
+    deleteKanji: function (data, index) {
+        data.kanji.splice(index, 1);
+    }
+};
+
+view.accents.filterRateLimited = ko.pureComputed(view.accents.filter).extend({
+    rateLimit: {
+        method: "notifyWhenChangesStop",
+        timeout: 800
+    }
+});
+
+view.accents.filterRateLimited.subscribe(function (val) {
+    if (!val || !val.length) {
+        return view.accents.loadPage(1);
+    }
+
+    view.accents.loadPage(1, val);
+});
+
+view.accents.pageDidLoad();
+
+{{/block}}

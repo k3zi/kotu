@@ -1,0 +1,162 @@
+<% extend('../../partials/layout') -%>
+
+{{block 'content'}}
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editAccentModal" aria-hidden="true" data-bind="with: users">
+    <div class="modal-dialog modal-lg" role="document" data-bind="if: selectedUser">
+        <div class="modal-content" data-bind="with: selectedUser">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update User: <span data-bind="text: id"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <h4 class="col-form-label">Role:</h4>
+                        <select class="form-control text-capitalize" data-bind="options: $parent.roles, value: role"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Username:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: username, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Nickname:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: nickname, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">Email:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: email, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="form-group">
+                        <h4 class="col-form-label">API Key:</h4>
+                        <input type="text" class="form-control" data-bind="textInput: api_key, attr: { readonly: $parent.loading }">
+                    </div>
+
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="updateUserActive" data-bind="checked: active">
+                        <label class="custom-control-label" for="updateUserActive">Active</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal", data-bind="disable: $parent.loading">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bind="click: $parent.update, disable: $parent.loading">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main class="mx-5" data-bind="with: users">
+    <div class="jumbotron py-3 px-3">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control mr-3" placeholder="Filter results by kanji/kana" data-bind="textInput: filter">
+            <button type="button" class="btn btn-primary" data-bind="click: add, disable: loading"><i class="fas fa-plus"></i> Add User</button>
+        </div>
+
+        <table class="table table-hover table-sm">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="text-center" scope="col">----</th>
+                    <th class="text-center" scope="col">Role</th>
+                    <th class="text-center" scope="col">Username</th>
+                    <th class="text-center" scope="col">Nickname</th>
+                    <th class="text-center" scope="col">Email</th>
+                    <th class="text-center" scope="col">Created</th>
+                    <th class="text-center" scope="col">Last Login</th>
+                    <th class="text-center" scope="col">Active</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: results">
+                <tr>
+                    <td class="text-center align-middle"><a href="#" data-bind="click: $parent.edit"><i class="far fa-edit"></i></a></td>
+                    <td class="text-center align-middle text-capitalize" data-bind="text: role">1</td>
+                    <th class="text-center align-middle" scope="row" data-bind="html: username"></th>
+                    <td class="text-center align-middle" data-bind="text: nickname"></td>
+                    <td class="text-center align-middle" data-bind="html: email"></td>
+                    <td class="text-center align-middle" data-bind="text: moment(createdAt).format('LLL')"></td>
+                    <td class="text-center align-middle" data-bind="text: moment(last_login).format('LLL')"></td>
+                    <td class="text-center align-middle" data-bind="text: active ? 'Yes' : 'No'"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+{{/block}}
+
+{{block 'scripts'}}
+
+view.users = {
+    page: ko.observable(1),
+    pages: ko.observable(0),
+    pageDidLoad: function () {
+        view.users.loadPage(1);
+    },
+    loadPage: function (page, search) {
+        view.users.page(page);
+
+        let limit = 15;
+        let offset = (view.users.page() - 1) * 15;
+        $.get('/api/data/users/' + offset + '/' + limit + (search ? ('/' + search) : '')).done(data => {
+            view.users.results(data.result);
+            view.users.roles(data.roles);
+            view.users.pages(data.pages);
+        });
+    },
+    loading: ko.observable(false),
+    results: ko.observableArray([]),
+    roles: ko.observableArray([]),
+    selectedUser: ko.observable(false),
+    edit: function (data) {
+        let clone = _.cloneDeep(data);
+        view.users.selectedUser(clone);
+        $('#editUserModal').modal('show');
+    },
+    add: function () {
+        $.get('/api/data/users/create').done(data => {
+            view.users.edit(data.result);
+        }).always(_ => {
+            view.users.loading(false);
+        });
+    },
+    filter: ko.observable(''),
+    update: function (updatedValue) {
+        updatedValue = ko.toJS(updatedValue);
+        view.users.loading(true);
+        $.put('/api/data/users/' + updatedValue.id, updatedValue).done(data => {
+            view.users.selectedUser(false);
+            let oldData = view.users.results().filter(x => {
+                return x.id === data.result.id;
+            })[0];
+
+            if (oldData) {
+                view.users.results.replace(oldData, data.result);
+            }
+
+            $('#editUserModal').modal('hide');
+        }).always(_ => {
+            view.users.loading(false);
+        });
+    }
+};
+
+view.users.filterRateLimited = ko.pureComputed(view.users.filter).extend({
+    rateLimit: {
+        method: "notifyWhenChangesStop",
+        timeout: 800
+    }
+});
+
+view.users.filterRateLimited.subscribe(function (val) {
+    if (!val || !val.length) {
+        return view.users.loadPage(1);
+    }
+
+    view.users.loadPage(1, val);
+});
+
+{{/block}}

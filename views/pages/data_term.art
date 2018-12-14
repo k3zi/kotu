@@ -1,0 +1,147 @@
+<div class="row">
+    <div class="col-8">
+        {{each entry.meanings}}
+        <small><%= $value.partOfSpeech %></small>
+        <div><%= ($index + 1) %>. <%= $value.text %><% if ($value.info.length) { %> <small><%= $value.info %></small><% } %></div>
+        {{/each}}
+
+        {{each entry.translations}}
+        <div><%= ($index + 1) %>. <%= $value.text %><% if ($value.info.length) { %> <small><%= $value.info %></small><% } %></div>
+        {{/each}}
+    </div>
+
+    <div class="col-4 text-right">
+        <h1><%= entry.title %></h1>
+        <% if (entry.subtitle.length) { %>
+        <h2><%= entry.subtitle %></h2>
+        <% } %>
+    </div>
+</div>
+<hr />
+
+<div class="btn-group">
+    <button <%= (audio.length == 0 ? 'disabled="disabled"' : '') %> type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        音声・Audio
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-left">
+        {{each audio}}
+            <h6 class="dropdown-header"><%= $value.provider %></h6>
+            {{each $value.results}}
+            <a class="dropdown-item playAudioInBackground" href="/api/media/audio/<%= encodeURIComponent(encodeURI(encryptor.encrypt($value.path))　) %>"><%= $value.hiragana %></a>
+            {{/each}}
+        {{/each}}
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-lg">
+        <div class="nav flex-column nav-pills" id="entryContentHeader" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="definition-tab" data-toggle="pill" href="#definition" role="tab" aria-controls="definition" aria-selected="true">意味・Definition</a>
+            <a class="nav-link" id="accent-tab" data-toggle="pill" href="#accent" role="tab" aria-controls="accent" aria-selected="false">発音・Pronunciation</a>
+            <a class="nav-link" id="examples-tab" data-toggle="pill" href="#examples" role="tab" aria-controls="examples" aria-selected="false">例文・Examples</a>
+            <a class="nav-link d-flex justify-content-between align-items-center" id="discussion-tab" data-toggle="pill" href="#discussion" role="tab" aria-controls="discussion" aria-selected="false">
+                コメント欄・Comments
+                <span class="badge badge-primary badge-pill">1</span>
+            </a>
+        </div>
+        <hr />
+    </div>
+
+    <div class="col-lg-9">
+        <div class="tab-content" id="entryContent">
+            <div class="tab-pane fade show active" id="definition" role="tabpanel" aria-labelledby="definition-tab">
+                <div class="accordion" id="commonDictionaries">
+                    <% if (dictionaries.wisdom.length > 0) { %>
+                    <div class="card">
+                        <div class="card-header" id="commonDict{{$index}}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseCommonDict{{$index}}" aria-expanded="true" aria-controls="collapseCommonDict{{$index}}">
+                                    Wisdom
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseCommonDict{{$index}}" class="collapse show" aria-labelledby="commonDict{{$index}}" data-parent="#commonDictionaries">
+                            <div class="card-body">
+                                {{each dictionaries.wisdom}}
+                                    <div class="wisdom">
+                                        <% include(dataFolder + '/dictionaries/' + $value.path) %>
+                                    </div>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                    {{each dictionaries.common}}
+                    <div class="card">
+                        <div class="card-header" id="commonDict{{$index}}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseCommonDict{{$index}}" aria-expanded="true" aria-controls="collapseCommonDict{{$index}}">
+                                    {{$value.provider}}
+                                </button>
+                            </h5>
+                        </div>
+
+                        <div id="collapseCommonDict{{$index}}" class="collapse" aria-labelledby="commonDict{{$index}}" data-parent="#commonDictionaries">
+                            <div class="card-body">
+                                {{each $value.results}}
+                                <pre class="text-wrap"><%- ($value[5].toString() || '').replace(/<a [a-z]*>/g, '') %></pre>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="accent" role="tabpanel" aria-labelledby="accent-tab">
+                {{each accents}}
+                    <% if ($index != 0) { %><hr /><% } %>
+                    <div class="row align-items-center">
+                        <div class="col text-left">
+                            {{each $value.set}}
+                                <%= $value.kana %><%= '【' + $value.kanji + ($value.expression ? ('、' + $value.expression) : '') + '】' %><% if (!$value.accurate) { %><span href="#" class="badge badge-warning">Maybe Inaccurate</span><% } %><br />
+                            {{/each}}
+                        </div>
+                        <div class="col-auto bg-dark text-light px-2 h4 my-0 word-accent">
+                            <%- $value.accent.map(a => a.accentString.replace(/＼\)/g, ')＼').replace(/\(/g, '<span class="devoiced">').replace(/\)/g, '</span>').replace('*', '&#12442;').replace('＼', '<span class="drop">＼</span>')).map((e, i, a) => (a.length - 1) == i ? (e.includes("＼") ? e : (e + '<span class="flat"></span>')) : e).join('・') %>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+
+            <div class="tab-pane fade" id="examples" role="tabpanel" aria-labelledby="examples-tab">
+                <div id="exampleProviders">
+                    {{each _.take(_.shuffle(entry.sentenceExamples), 25)}}
+                        <% if ($index != 0) { %><hr /><% } %>
+                        <div class="row align-items-center">
+                            <div class="col text-left">
+                            <blockquote class="blockquote mb-0">
+                                <p class="mb-0"><%= $value.japanese %></p>
+                                <% if ($value.english && $value.english.length) { %>
+                                    <footer class="blockquote-footer"><%= $value.english %></footer>
+                                <% } %>
+                                <span class="badge badge-secondary"><%= $value.type %></span>
+                                <span class="badge badge-info"><%= $value.source %></span>
+                            </blockquote>
+                            </div>
+                            <div class="col-auto px-2 h4 my-0 word-accent">
+                                <a class="playAudioInBackground" style="width: 50px; height: 50px; display: block;" href="/api/media/examples/<%= encodeURIComponent(encodeURI(encryptor.encrypt($value.soundPath))　) %>">
+                                    <%- icons.icon("ei-play", { size: "m" }) %>
+                                </a>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="discussion" role="tabpanel" aria-labelledby="discussion-tab">
+                <textarea class="editor">
+                </textarea>
+            </div>
+        </div>
+    </div>
+</div>
