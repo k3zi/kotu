@@ -147,7 +147,7 @@ function addAccent(string, index) {
 }
 
 
-(async () => {
+module.exports = (async () => {
     await models.sequelize.sync();
     console.log('Loaded models.');
     const dictData = require(path.join(__dirname, 'daijirin.json'));
@@ -357,6 +357,4 @@ function addAccent(string, index) {
     });
 
     console.log('Done.');
-
-
-})();
+});

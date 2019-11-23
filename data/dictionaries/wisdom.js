@@ -89,7 +89,13 @@ function parseFile() {
     /*fs.writeFileSync(wisdomEMapJSONPath, JSON.stringify(wisdomEMap), 'utf8');*/
     fs.writeFileSync(wisdomJMapJSONPath, JSON.stringify(wisdomJMap), 'utf8');
 }
+module.exports = new Promise((resolve, reject) => {
+    glob("./wisdom/*.html", function (error, files) {
+        if (error) {
+            return reject(error);
+        }
 
-glob("./wisdom/*.html", function (er, files) {
-    parseFile(files.reverse());
-});
+        parseFile(files.reverse());
+        resolve();
+    });
+};

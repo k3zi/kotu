@@ -80,10 +80,12 @@ typings/
 
 # Custom
 .DS_Store
-config.js
 config
+!config/.gitkeep
 data/**/*.mp3
 data/**/*.zip
+data/**/*.gz
+data/**/*.lastModified
 data/**/*.xml
 data/**/*.html
 data/**/*.json
