@@ -7,18 +7,21 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             type: DataTypes.INTEGER
         },
-        japanese: DataTypes.TEXT,
-        english: DataTypes.TEXT,
+        text: DataTypes.TEXT,
         soundPath: DataTypes.STRING(1000),
-        type: DataTypes.STRING,
-        source: DataTypes.STRING
+        startTime: DataTypes.DOUBLE,
+        endTime: DataTypes.DOUBLE
     }, {});
     SentenceExample.associate = function(models) {
-        SentenceExample.belongsToMany(models.JMdictEntry, {
-            as: 'sentenceExampleEntries',
-            through: 'SentenceExampleEntry',
-            foreignKey: 'sentenceExampleId',
-            otherKey: 'entryId',
+        SentenceExample.hasMany(models.SentenceExampleComponent, {
+            as: 'components',
+            foreignKey: 'sentenceExampleComponentId',
+            foreignKeyConstraint: true
+        });
+        SentenceExample.belongsTo(models.SentenceExampleMedia, {
+            as: 'media',
+            onDelete: "CASCADE",
+            targetKey: 'id',
             foreignKeyConstraint: true
         });
     };

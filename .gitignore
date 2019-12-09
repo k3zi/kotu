@@ -90,3 +90,5 @@ data/**/*.xml
 data/**/*.html
 data/**/*.json
 data/**/*.csv
+**/temp/*
+!**/temp/.gitkeep

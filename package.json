@@ -45,6 +45,7 @@
     "ffprobe-static": "latest",
     "file-exist": "0.0.4",
     "file-exists": "^5.0.1",
+    "fluent-ffmpeg": "^2.1.2",
     "fs": "0.0.1-security",
     "fuse.js": "^3.3.0",
     "gijgo": "^1.9.11",
@@ -82,6 +83,7 @@
     "uuid": "^3.3.3",
     "validator": "^10.9.0",
     "xml-escape": "^1.1.0",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "youtube-dl": "^2.1.0"
   }
 }

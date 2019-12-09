@@ -11,6 +11,7 @@ const moji = require('moji');
 const program = require('commander');
 const Sequelize = require('sequelize');
 const uuidv1 = require('uuid/v1');
+
 const mecab = new MeCab();
 mecab.command = "/usr/local/bin/mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd";
 

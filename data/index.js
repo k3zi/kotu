@@ -1,3 +1,4 @@
+const Fuse = require('fuse.js');
 const fs = require('fs');
 const path = require('path');
 const xml2js = require('xml2js');
@@ -39,6 +40,50 @@ function addSubFiles(data, passThrough, callback) {
             data: require(path.join(__dirname, 'dictionaries', 'kotowaza.json'))
         }
     ];
+
+    const options = {
+        shouldSort: true,
+        threshold: 0.6,
+        location: 0,
+        distance: 20,
+        maxPatternLength: 32,
+        minMatchCharLength: 1,
+        keys: [0]
+    };
+
+    data.dictionaries.searchCommon = function (entry) {
+        const q = (entry.entryKanjiElements && entry.entryKanjiElements.length) ? entry.entryKanjiElements.word : entry.entryReadingElements.word;
+        return data.dictionaries.common.map(d => {
+           const siftedData = d.data.filter(x => {
+               // 0 = expression, 1 = reading, 5 = glossary
+               const expression = x[0];
+               const reading = x[1];
+
+               if (entry.entryKanjiElements && entry.entryKanjiElements.length) {
+                   let kanjiPart = entry.entryKanjiElements.some(k => k.word == expression);
+                   if (kanjiPart) {
+                       return true;
+                   }
+               }
+
+               return entry.entryReadingElements.some(r => r.word == expression || r.word == reading);
+           });
+
+           const fuse = new Fuse(siftedData, options);
+           const results = fuse.search(q).map(result => {
+
+               return {
+                   expression: result[0][0],
+                   reading: result[1][0],
+                   glossary: result[5][0].replace(/(?:\r\n|\r|\n)/g, '<br />')
+               }
+           });
+           return {
+               provider: d.provider,
+               results: results
+           };
+       }).filter(p => p.results.length);
+   };
 
     if (callback) {
         callback(data);

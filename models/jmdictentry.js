@@ -45,14 +45,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'accentEntryId',
             foreignKeyConstraint: true
         });
-
-        JMdictEntry.belongsToMany(models.SentenceExample, {
-            as: 'sentenceExamples',
-            through: 'SentenceExampleEntry',
-            foreignKey: 'entryId',
-            otherKey: 'sentenceExampleId',
-            foreignKeyConstraint: true
-        });
     };
     return JMdictEntry;
 };

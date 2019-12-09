@@ -181,16 +181,32 @@ module.exports = function (passThrough) {
             seperate: true
         },
         {
-            model: models.SentenceExample,
-            as: 'sentenceExamples',
-            seperate: true
-        },
-        {
             model: models.AccentJMDictPair,
             as: 'entryAccents',
             seperate: true
         }
     ];
+
+    exportFinal.examplesForEntry = function (entry) {
+        const kanjis = entry.entryKanjiElements.map(e => e.word);
+        const readings = entry.entryReadingElements.map(e => e.word);
+        return models.SentenceExample.findAll({
+            where: {
+                '$components.text$': kanjis.concat(readings)
+            },
+            include: [
+                {
+                    model: models.SentenceExampleComponent,
+                    as: 'components'
+                },
+                {
+                    model: models.SentenceExampleMedia,
+                    as: 'media',
+                    seperate: true
+                }
+            ]
+        }).map(m => m.get({ plain: true }));
+    }
 
     exportFinal.resultMapping = function (d) {
         d = d.get({ plain: true });

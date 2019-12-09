@@ -88,7 +88,7 @@
                         <div id="collapseCommonDict{{$index}}" class="collapse" aria-labelledby="commonDict{{$index}}" data-parent="#commonDictionaries">
                             <div class="card-body">
                                 {{each $value.results}}
-                                <pre class="text-wrap"><%- ($value[5].toString() || '').replace(/<a [a-z]*>/g, '') %></pre>
+                                <div class="text-wrap"><%- ($value.glossary || '') %></div>
                                 {{/each}}
                             </div>
                         </div>
@@ -115,22 +115,25 @@
 
             <div class="tab-pane fade" id="examples" role="tabpanel" aria-labelledby="examples-tab">
                 <div id="exampleProviders">
-                    {{each _.take(_.shuffle(entry.sentenceExamples), 25)}}
+                    {{each _.take(_.shuffle(examples), 25)}}
                         <% if ($index != 0) { %><hr /><% } %>
                         <div class="row align-items-center">
                             <div class="col text-left">
                             <blockquote class="blockquote mb-0">
-                                <p class="mb-0"><%= $value.japanese %></p>
-                                <% if ($value.english && $value.english.length) { %>
-                                    <footer class="blockquote-footer"><%= $value.english %></footer>
-                                <% } %>
-                                <span class="badge badge-secondary"><%= $value.type %></span>
-                                <span class="badge badge-info"><%= $value.source %></span>
+                                <p class="mb-0"><%= $value.text %></p>
+                                <span class="badge badge-secondary"><%= $value.media.type %></span>
+                                {{each $value.media.tags}}
+                                    <span class="badge badge-info"><%= $value %></span>
+                                {{/each}}
                             </blockquote>
                             </div>
                             <div class="col-auto px-2 h4 my-0 word-accent">
-                                <a class="playAudioInBackground" style="width: 50px; height: 50px; display: block;" href="/api/media/examples/<%= encodeURIComponent(encodeURI(encryptor.encrypt($value.soundPath))　) %>">
+                                <a class="playAudioInBackground" style="width: 50px; height: 50px; display: block;" href="/api/media/examples/<%= encodeURIComponent(encodeURI(encryptor.encrypt($value.id))　) %>">
                                     <%- icons.icon("ei-play", { size: "m" }) %>
+                                </a>
+
+                                <a style="width: 50px; height: 50px; display: block;" href="/api/media/download/examples/<%= encodeURIComponent(encodeURI(encryptor.encrypt($value.id))　) %>">
+                                    <%- icons.icon("ei-arrow-down", { size: "m" }) %>
                                 </a>
                             </div>
                         </div>

@@ -33,8 +33,7 @@ module.exports = function(passThrough) {
         const id = req.params.id;
         models.JMdictEntry.findByPk(id, {
             include: helpers.includeAllEntry
-        }).then(entry => {
-
+        }).then(async entry => {
             const jmdictId = entry.reference.jmdict_id;
 
             const audioOptions = {
@@ -45,16 +44,6 @@ module.exports = function(passThrough) {
                 maxPatternLength: 32,
                 minMatchCharLength: 1,
                 keys: ['path', 'kanji', 'hiragana']
-            };
-
-            const options = {
-                shouldSort: true,
-                threshold: 0.6,
-                location: 0,
-                distance: 20,
-                maxPatternLength: 32,
-                minMatchCharLength: 1,
-                keys: [0]
             };
 
             const model = {};
@@ -74,30 +63,12 @@ module.exports = function(passThrough) {
 
             model.accents = helpers.parseAccents(entry.entryAccents);
 
+            model.examples = await helpers.examplesForEntry(entry);
+            console.log(model.examples);
+
             model.dictionaries = {};
             model.dictionaries.wisdom = data.dictionaries.wisdom_j.filter(x => x.jmdicte_id == jmdictId);
-            model.dictionaries.common = data.dictionaries.common.map(d => {
-                const siftedData = d.data.filter(x => {
-                    // 0 = expression, 1 = reading, 5 = glossary
-                    const expression = x[0];
-                    const reading = x[1];
-
-                    if (entry.entryKanjiElements && entry.entryKanjiElements.length) {
-                        let kanjiPart = entry.entryKanjiElements.some(k => k.word == expression);
-                        if (kanjiPart) {
-                            return true;
-                        }
-                    }
-
-                    return entry.entryReadingElements.some(r => r.word == expression || r.word == reading);
-                });
-
-                const fuse = new Fuse(siftedData, options);
-                return {
-                    provider: d.provider,
-                    results: fuse.search(q)
-                };
-            }).filter(p => p.results.length);
+            model.dictionaries.common = data.dictionaries.searchCommon(entry);
             model.title = entry.title;
             return res.render('pages/data', model);
         }).catch(next);
@@ -113,7 +84,7 @@ module.exports = function(passThrough) {
 
         const sentence = req.params.sentence;
         const mecab = new MeCab();
-        mecab.command = "/usr/local/bin/mecab -d /usr/lib64/mecab/dic/mecab-ipadic-neologd";
+        mecab.command = "/usr/local/bin/mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd";
 
         mecab.parse(sentence, function(err, result) {
             if (err) {
@@ -136,21 +107,9 @@ module.exports = function(passThrough) {
             });
 
             Promise.all(result.map(x => {
-                const surfaceForm = x.kanji;
-                const originalForm = x.original;
-                let reading = x.reading;
-                const isKanji = reading && reading.length > 0 && moji(reading).reject('HG').reject('KK').toString().length > 1;
-                const mojiItem = isKanji ? x.reading : reading;
-                reading = (!mojiItem || !mojiItem.length) ? '' : moji(mojiItem).convert('HG', 'KK').toString();
-
-                const finalFurigana = originalForm.replace(surfaceForm, '');
-                const romajiOriginal = surfaceForm + finalFurigana;
-                return helpers.searchWordData(x.original, !x.lexical.includes('名詞') ? x.original : reading).then(results => {
-                    return {
-                        data: x,
-                        results: results
-                    }
-                });
+                return {
+                    data: x
+                }
             })).then(result => {
                 return res.render('pages/sentence', {
                     result: result,
