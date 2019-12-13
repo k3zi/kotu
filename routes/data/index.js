@@ -34,6 +34,7 @@ module.exports = function(passThrough) {
         models.JMdictEntry.findByPk(id, {
             include: helpers.includeAllEntry
         }).then(async entry => {
+            console.log(`Loaded entry: ${entry.id}`);
             const jmdictId = entry.reference.jmdict_id;
 
             const audioOptions = {
@@ -64,7 +65,6 @@ module.exports = function(passThrough) {
             model.accents = helpers.parseAccents(entry.entryAccents);
 
             model.examples = await helpers.examplesForEntry(entry);
-            console.log(model.examples);
 
             model.dictionaries = {};
             model.dictionaries.wisdom = data.dictionaries.wisdom_j.filter(x => x.jmdicte_id == jmdictId);
@@ -72,6 +72,20 @@ module.exports = function(passThrough) {
             model.title = entry.title;
             return res.render('pages/data', model);
         }).catch(next);
+    });
+
+    router.get('/examples/:text', [
+        check('text').exists().not().isEmpty().withMessage('is required')
+    ], async (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(422).json(helpers.outputValidationErrors(errors.array()));
+        }
+
+        const model = {};
+        const text = req.params.text;
+        model.examples = await helpers.examplesContaing(text);
+        return res.render('pages/examples', model);
     });
 
     router.get('/sentence/:sentence', [

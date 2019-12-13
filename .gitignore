@@ -92,3 +92,5 @@ data/**/*.json
 data/**/*.csv
 **/temp/*
 !**/temp/.gitkeep
+data/examples/audio/*
+!data/examples/audio/.gitkeep

@@ -189,10 +189,35 @@ module.exports = function (passThrough) {
 
     exportFinal.examplesForEntry = function (entry) {
         const kanjis = entry.entryKanjiElements.map(e => e.word);
+        const flattened = arr => [].concat(...arr);
+        const kanjiRestrictedReadings = flattened(entry.entryKanjiElements
+            .map(e => e.kanjiRestrictedReadingElements))
+            .map(e => e.word);
         const readings = entry.entryReadingElements.map(e => e.word);
+        const all = kanjis.concat(readings).concat(kanjiRestrictedReadings);
+
+        return exportFinal.examplesContaingArray(all);
+    };
+
+    exportFinal.examplesContaing = function (text) {
+        return exportFinal.examplesContaingArray([text]);
+    }
+
+    exportFinal.examplesContaingArray = function (arr) {
         return models.SentenceExample.findAll({
             where: {
-                '$components.text$': kanjis.concat(readings)
+                [Op.or]: [
+                    {
+                        '$components.text$': arr
+                    },
+                    {
+                        'text': {
+                            [Op.like]: {
+                                [Op.any]: arr.map(a => `%${a}%`)
+                            }
+                        }
+                    }
+                ]
             },
             include: [
                 {
@@ -206,7 +231,7 @@ module.exports = function (passThrough) {
                 }
             ]
         }).map(m => m.get({ plain: true }));
-    }
+    };
 
     exportFinal.resultMapping = function (d) {
         d = d.get({ plain: true });

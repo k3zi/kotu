@@ -121,6 +121,9 @@
                     <a class="list-group-item list-group-item-action flex-column align-items-start rt-0" data-bind="attr: { href: '/data/sentence/' + encodeURIComponent(search.input()) }">
                         <div class="d-flex w-100 justify-content-between">Parse Sentence <span class="float-right">→</span></div>
                     </a>
+                    <a class="list-group-item list-group-item-action flex-column align-items-start rt-0" data-bind="attr: { href: '/data/examples/' + encodeURIComponent(search.input()) }">
+                        <div class="d-flex w-100 justify-content-between">Example Sentences <span class="float-right">→</span></div>
+                    </a>
                 <!-- /ko -->
                 <!-- ko if: search.loading -->
                 <div class="list-group-item list-group-item-action rt-0">

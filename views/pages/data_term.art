@@ -115,7 +115,7 @@
 
             <div class="tab-pane fade" id="examples" role="tabpanel" aria-labelledby="examples-tab">
                 <div id="exampleProviders">
-                    {{each _.take(_.shuffle(examples), 25)}}
+                    {{each examples}}
                         <% if ($index != 0) { %><hr /><% } %>
                         <div class="row align-items-center">
                             <div class="col text-left">

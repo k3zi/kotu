@@ -47,20 +47,23 @@ module.exports = function(passThrough) {
             ]
         });
 
+        if (!example || example.soundPath) {
+            return ffmpeg(example
+                ? example.soundPath
+                : path.join(config.directory.server, 'data', type, decryptedExampleId))
+                .format('mp3')
+                .pipe(res, { end: true });
+        }
+
         const soundPath = path.join(config.directory.server, 'data', type, example.media.soundPath);
-        console.log(soundPath);
-        console.log('start time', example.startTime);
-        console.log('duration', example.endTime - example.startTime);
-        const padding = 0.5;
+        const padding = 1;
         const startTime = Math.max(example.startTime - padding, 0);
         const duration = example.endTime - example.startTime + (2 * padding);
+
         ffmpeg(soundPath)
             .format('mp3')
             .seekInput(startTime)
             .duration(duration)
-            .on('error', function(err) {
-                console.log('an error happened: ' + err.message);
-            })
             .pipe(res, { end: true });
     });
 
@@ -90,17 +93,20 @@ module.exports = function(passThrough) {
             ]
         });
 
+        if (example.soundPath) {
+            return ffmpeg(example.soundPath)
+                .format('mp3')
+                .pipe(res.attachment(`${example.text}.mp3`), { end: true });
+        }
+
         const soundPath = path.join(config.directory.server, 'data', type, example.media.soundPath);
-        const padding = 0.5;
+        const padding = 1;
         const startTime = Math.max(example.startTime - padding, 0);
         const duration = example.endTime - example.startTime + (2 * padding);
         ffmpeg(soundPath)
             .format('mp3')
             .seekInput(startTime)
             .duration(duration)
-            .on('error', function(err) {
-                console.log('an error happened: ' + err.message);
-            })
             .pipe(res.attachment(`${example.text}.mp3`), { end: true });
     });
 

@@ -48,20 +48,14 @@ module.exports = function(passThrough) {
                 where: {
                     [Op.or]: [
                         {
-                            '$entryKanjiElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
+                            '$entryKanjiElements.word$': q
                         },
                         {
-                            '$entryKanjiElements.kanjiRestrictedReadingElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
+                            '$entryKanjiElements.kanjiRestrictedReadingElements.word$': q
                         },
                         {
-                            '$entryReadingElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
-                        },
+                            '$entryReadingElements.word$': q
+                        }
                     ]
                 },
                 include: helpers.includeAllEntry
@@ -74,7 +68,7 @@ module.exports = function(passThrough) {
                     required: true,
                     where: {
                         value: {
-                            [Op.like]: `%${q}%`
+                            [Op.like]: q
                         }
                     }
                 }, {

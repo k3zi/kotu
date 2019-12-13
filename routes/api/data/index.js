@@ -50,19 +50,13 @@ module.exports = function(passThrough) {
                 where: {
                     [Op.or]: [
                         {
-                            '$entryKanjiElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
+                            '$entryKanjiElements.word$': q
                         },
                         {
-                            '$entryKanjiElements.kanjiRestrictedReadingElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
+                            '$entryKanjiElements.kanjiRestrictedReadingElements.word$': q
                         },
                         {
-                            '$entryReadingElements.word$': {
-                                [Op.like]: `${q}%`
-                            }
+                            '$entryReadingElements.word$': q
                         },
                     ]
                 },
@@ -113,7 +107,7 @@ module.exports = function(passThrough) {
         models.JMdictEntry.findByPk(id, {
             include: helpers.includeAllEntry
         }).then(entry => {
-
+            console.log(`Loaded entry: ${entry.id}`);
             let audioOptions = {
                 shouldSort: true,
                 threshold: 0.6,
@@ -153,29 +147,7 @@ module.exports = function(passThrough) {
 
             model.dictionaries = {};
             model.dictionaries.wisdom = data.dictionaries.wisdom_j.filter(x => x.jmdicte_id == id);
-            model.dictionaries.common = data.dictionaries.common.map(d => {
-                let siftedData = d.data.filter(x => {
-                    // 0 = expression, 1 = reading, 5 = glossary
-                    let expression = x[0];
-                    let reading = x[1];
-
-                    if (entry.entryKanjiElements && entry.entryKanjiElements.length) {
-                        let kanjiPart = entry.entryKanjiElements.some(k => k.word == expression);
-                        if (kanjiPart) {
-                            return true;
-                        }
-                    }
-
-                    let hiraganaPart = entry.entryReadingElements.some(r => r.word == expression || r.word == reading);
-                    return hiraganaPart;
-                });
-
-                let fuse = new Fuse(siftedData, options);
-                return {
-                    provider: d.provider,
-                    results: fuse.search(q)
-                };
-            }).filter(p => p.results.length);
+            model.dictionaries.common = data.dictionaries.searchCommon(entry);
             return res.render('pages/data_term', model);
         }).catch(next);
     });
