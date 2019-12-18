@@ -98,7 +98,7 @@ module.exports = function(passThrough) {
 
         const sentence = req.params.sentence;
         const mecab = new MeCab();
-        mecab.command = "/usr/local/bin/mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd";
+        mecab.command = config.mecabCommand;
 
         mecab.parse(sentence, function(err, result) {
             if (err) {
