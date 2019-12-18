@@ -14,7 +14,7 @@ const Sequelize = require('sequelize');
 const uuidv1 = require('uuid/v1');
 
 const mecab = new MeCab();
-mecab.command = "/usr/local/bin/mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd";
+mecab.command = config.mecabCommand;
 
 // Sequelize Model Import
 const sequelize = new Sequelize(config.database.database, config.database.username, config.database.password, {
