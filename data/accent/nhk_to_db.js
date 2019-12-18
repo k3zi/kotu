@@ -29,8 +29,8 @@ const smallHiragana = 'ぁぃぅぇぉゃゅょゎ';
 const smallKatakana = 'ァィゥェォヵㇰヶㇱㇲㇳㇴㇵㇶㇷㇷ゚ㇸㇹㇺャュョㇻㇼㇽㇾㇿヮ';
 
 function getKanjiArray(s) {
-    let arr = [];
-    for (const i = 0;  i < s.length; i++) {
+    const arr = [];
+    for (let i = 0;  i < s.length; i++) {
         if (s[i] >= "\u3040" && s[i] <= "\u30ff") {
             result = true;
         } else {
@@ -43,7 +43,7 @@ function getKanjiArray(s) {
 
 function convertVowelToExtended(y) {
     let x = y;
-    for (const i = 1; i < x.length; i++) {
+    for (let i = 1; i < x.length; i++) {
         if (arow.includes(x[i - 1])) {
             if (x[i] === 'ア') {
                 x = x.replace(/./g, (c, y) => y == i ? 'ー' : c);
