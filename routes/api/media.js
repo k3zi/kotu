@@ -37,6 +37,13 @@ module.exports = function(passThrough) {
 
         let encryptedPath = req.params.encryptedPath;
         let decryptedExampleId = res.locals.encryptor.decrypt(encryptedPath);
+
+        if (typeof decryptedExampleId === 'string') {
+            return ffmpeg(decryptedExampleId)
+                .format('mp3')
+                .pipe(res.attachment(`${example.text}.mp3`), { end: true });
+        }
+
         let example = await models.SentenceExample.findByPk(decryptedExampleId, {
             include: [
                 {
@@ -47,10 +54,8 @@ module.exports = function(passThrough) {
             ]
         });
 
-        if (!example || example.soundPath) {
-            return ffmpeg(example
-                ? example.soundPath
-                : path.join(config.directory.server, 'data', type, decryptedExampleId))
+        if (example.soundPath) {
+            return ffmpeg(example.soundPath)
                 .format('mp3')
                 .pipe(res, { end: true });
         }
@@ -83,6 +88,13 @@ module.exports = function(passThrough) {
 
         let encryptedPath = req.params.encryptedPath;
         let decryptedExampleId = res.locals.encryptor.decrypt(encryptedPath);
+
+        if (typeof decryptedExampleId === 'string') {
+            return ffmpeg(decryptedExampleId)
+                .format('mp3')
+                .pipe(res.attachment(`${example.text}.mp3`), { end: true });
+        }
+
         let example = await models.SentenceExample.findByPk(decryptedExampleId, {
             include: [
                 {
