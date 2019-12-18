@@ -1,3 +1,4 @@
+process.env["NODE_CONFIG_DIR"] = __dirname + "/../../config/";
 const _ = require('lodash');
 const config = require('config');
 const fs = require('fs');

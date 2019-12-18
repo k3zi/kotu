@@ -33,7 +33,6 @@ const program = require('commander');
 program
   .version('0.0.1')
   .option('-p, --port [value]', 'Specify the port the application should run on.')
-  .option('-m, --mecab [value]', 'Specify a custom command for MeCab.')
   .parse(process.argv);
 
 const port = program.port || 1272;

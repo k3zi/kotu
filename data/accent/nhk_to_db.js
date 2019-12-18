@@ -1,12 +1,11 @@
+process.env["NODE_CONFIG_DIR"] = __dirname + "/../../config/";
 const _ = require('lodash');
 const config = require('config');
-
 const fs = require('fs');
 const path = require('path');
 const neatCsv = require('neat-csv');
 const moji = require('moji');
 const Promise = require('bluebird');
-
 const Sequelize = require('sequelize');
 
 // Sequelize Model Import
