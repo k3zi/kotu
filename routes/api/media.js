@@ -39,6 +39,7 @@ module.exports = function(passThrough) {
         let decryptedExampleId = res.locals.encryptor.decrypt(encryptedPath);
 
         if (typeof decryptedExampleId === 'string') {
+            const soundPath = path.join(config.directory.server, 'data', type, decryptedExampleId);
             return ffmpeg(decryptedExampleId)
                 .format('mp3')
                 .pipe(res, { end: true });
@@ -55,7 +56,8 @@ module.exports = function(passThrough) {
         });
 
         if (example.soundPath) {
-            return ffmpeg(example.soundPath)
+            const soundPath = path.join(config.directory.server, 'data', type, example.soundPath);
+            return ffmpeg(soundPath)
                 .format('mp3')
                 .pipe(res, { end: true });
         }
@@ -109,7 +111,8 @@ module.exports = function(passThrough) {
         });
 
         if (example.soundPath) {
-            return ffmpeg(example.soundPath)
+            const soundPath = path.join(config.directory.server, 'data', type, example.soundPath);
+            return ffmpeg(soundPath)
                 .format('mp3')
                 .pipe(res.attachment(`${example.text}.mp3`), { end: true });
         }
