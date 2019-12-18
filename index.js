@@ -1,6 +1,9 @@
 // Imports Sorted Alphabetically
 const _ = require('lodash');
 const AccessControl = require('accesscontrol');
+// Imports Sorted Alphabetically
+const _ = require('lodash');
+const AccessControl = require('accesscontrol');
 const bodyParser = require('body-parser');
 const cls = require('continuation-local-storage');
 const compression = require('compression');
@@ -13,7 +16,6 @@ const extendSequelize = require('sequelize-extension');
 const enhanceTracking = require('sequelize-extension-tracking');
 const fileExists = require('file-exists');
 const fs = require('fs');
-const nodegit = require("nodegit");
 const passport = require('passport');
 const path = require("path");
 const RateLimiter = require('async-ratelimiter');
@@ -29,6 +31,14 @@ const url = require('url');
 const RedisStore = require('connect-redis')(session);
 const home = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 const app = express();
+
+const program = require('commander');
+program
+  .version('0.0.1')
+  .option('-p, --port [value]', 'Specify the port the application should run on.')
+  .parse(process.argv);
+
+const port = program.port || 1272;
 
 process.on('uncaughtException', function (err) {
     console.log(err);
@@ -57,7 +67,6 @@ const rateLimiter = new RateLimiter({
     max: 10,
     duration: 10000
 });
-
 
 let grantsObject = {
     admin: {
@@ -165,7 +174,7 @@ const ac = (new AccessControl(grantsObject)).lock();
         extended: true
     }));
     app.use(bodyParser.json());
-
+    let redisClient = new Redis();
     // Add Passport Login/Session Middleware
     app.use(cookieParser(config.security.sessionSecret));
     app.use(session({
@@ -173,7 +182,7 @@ const ac = (new AccessControl(grantsObject)).lock();
         resave: false,
         saveUninitialized: true,
         proxy: true,
-        store: new RedisStore(),
+        store: new RedisStore({ client: redisClient }),
     }));
     app.use(passport.initialize());
     app.use(passport.session());
@@ -202,7 +211,7 @@ const ac = (new AccessControl(grantsObject)).lock();
     app.use('/', require('./routes')(passThrough));
 
     // Start listening
-    app.listen(1272, () => {
-        console.log('Website listening on port 1272!');
+    app.listen(port, () => {
+        console.log(`Website listening on port ${port}!`);
     });
 })();
