@@ -38,7 +38,7 @@ module.exports = function(passThrough) {
         let encryptedPath = req.params.encryptedPath;
         let decryptedExampleId = res.locals.encryptor.decrypt(encryptedPath);
 
-        if (typeof decryptedExampleId === 'string') {
+        if (typeof decryptedExampleId === 'string' && isNaN(parseInt(decryptedExampleId))) {
             const soundPath = path.join(config.directory.server, 'data', type, decryptedExampleId);
             return ffmpeg(soundPath)
                 .format('mp3')
@@ -91,7 +91,7 @@ module.exports = function(passThrough) {
         let encryptedPath = req.params.encryptedPath;
         let decryptedExampleId = res.locals.encryptor.decrypt(encryptedPath);
 
-        if (typeof decryptedExampleId === 'string') {
+        if (typeof decryptedExampleId === 'string' && isNaN(parseInt(decryptedExampleId))) {
             let arr = decryptedExampleId.split('/');
             arr = arr[arr.length - 1].split('.');
             const fileName = arr[0];
