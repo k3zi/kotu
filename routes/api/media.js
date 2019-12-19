@@ -40,7 +40,7 @@ module.exports = function(passThrough) {
 
         if (typeof decryptedExampleId === 'string') {
             const soundPath = path.join(config.directory.server, 'data', type, decryptedExampleId);
-            return ffmpeg(decryptedExampleId)
+            return ffmpeg(soundPath)
                 .format('mp3')
                 .pipe(res, { end: true });
         }
@@ -94,10 +94,11 @@ module.exports = function(passThrough) {
         if (typeof decryptedExampleId === 'string') {
             let arr = decryptedExampleId.split('/');
             arr = arr[arr.length - 1].split('.');
-            arr = arr[0];
-            return ffmpeg(decryptedExampleId)
+            const fileName = arr[0];
+            const soundPath = path.join(config.directory.server, 'data', type, decryptedExampleId);
+            return ffmpeg(soundPath)
                 .format('mp3')
-                .pipe(res.attachment(`${arr}.mp3`), { end: true });
+                .pipe(res.attachment(`${fileName}.mp3`), { end: true });
         }
 
         let example = await models.SentenceExample.findByPk(decryptedExampleId, {
