@@ -151,6 +151,25 @@ function addAccent(string, index) {
 (async () => {
     await models.sequelize.sync();
     console.log('Loaded models.');
+    await models.AccentJMDictPair.destroy({
+        where: {
+            [Sequelize.Op.and]: [
+                {
+                    sources: {
+                        [Sequelize.Op.contains]: "daijirin3"
+                    }
+                },
+                {
+                    [Sequelize.Op.not]: {
+                        sources: {
+                            [Sequelize.Op.contains]: "nhk1998"
+                        }
+                    }
+                }
+            ]
+        }
+    });
+    
     const dictData = require(path.join(__dirname, 'daijirin.json'));
     let s = 0;
     await Promise.map(dictData, async (d, i) => {
