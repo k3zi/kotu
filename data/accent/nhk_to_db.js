@@ -13,7 +13,7 @@ const sequelize = new Sequelize(config.database.database, config.database.userna
     host: config.database.host,
     dialect: config.database.dialect,
     operatorAliases: Sequelize.Op,
-    logging: true
+    logging: false
 });
 const models = require("../../models");
 
