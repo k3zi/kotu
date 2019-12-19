@@ -183,17 +183,19 @@ function addAccent(string, index) {
                 }
 
                 e.reading = moji(e.reading.trim()).convert('HG', 'KK').toString();
+                
+                console.log(e);
 
                 const results = await models.AccentJMDictPair.findAll({
                     where: {
                         kanji: {
-                            [Sequelize.Op.contains]: e.expression
+                            [Sequelize.Op.contains]: [e.expression]
                         },
-                        kana: {
-                            [Sequelize.Op.contains]: e.reading
-                        }
+                        kana: e.reading
                     }
                 });
+                
+                console.log(results);
 
                 const accentMatchResults = results.filter(r => r.accent.length == 1 && e.accentMatches.includes(r.accent[0].accentNumber));
                 if (accentMatchResults.length) {
@@ -290,7 +292,7 @@ function addAccent(string, index) {
                                 accentString: addAccent(e.reading, accentNumber),
                                 accentNumber: accentNumber
                             }],
-                            kana: [e.reading],
+                            kana: e.reading,
                             kanji: [kanji],
                             fullKanji: kanji,
                             sources: ['daijirin3'],
