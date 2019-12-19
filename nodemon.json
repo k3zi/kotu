@@ -11,6 +11,8 @@
         "data/**/*.csv",
         "**/temp/*",
         "data/dictionaries/wisdom/*",
-        "data/examples/audio/*"
+        "data/examples/audio/*",
+        "node_modules/*",
+        ".git/*"
     ]
 }
