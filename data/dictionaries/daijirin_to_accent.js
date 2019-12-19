@@ -1,3 +1,4 @@
+process.env["NODE_CONFIG_DIR"] = __dirname + "/../../config/";
 const _ = require('lodash');
 const config = require('config');
 
@@ -152,7 +153,7 @@ module.exports = (async () => {
     console.log('Loaded models.');
     const dictData = require(path.join(__dirname, 'daijirin.json'));
     let s = 0;
-    await Promise.mapSeries(dictData, async (d, i) => {
+    await Promise.map(dictData, async (d, i) => {
         if (d[5][0].includes('[') && s < 40) {
             const e = {
                 expression: d[0],
@@ -354,7 +355,7 @@ module.exports = (async () => {
                 });
             }*/
         }
-    });
+    }, { concurrency: 20 });
 
     console.log('Done.');
 });
