@@ -191,11 +191,9 @@ function addAccent(string, index) {
                         kanji: {
                             [Sequelize.Op.contains]: [e.expression]
                         },
-                        kana: e.reading
+                        kana: [e.reading, convertVowelToExtended(e.reading,).replace(/ヅ/g, 'ズ')],
                     }
                 });
-                
-                console.log(results);
 
                 const accentMatchResults = results.filter(r => r.accent.length == 1 && e.accentMatches.includes(r.accent[0].accentNumber));
                 if (accentMatchResults.length) {
