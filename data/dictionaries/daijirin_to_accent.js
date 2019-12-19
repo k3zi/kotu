@@ -187,10 +187,10 @@ function addAccent(string, index) {
                 const results = await models.AccentJMDictPair.findAll({
                     where: {
                         kanji: {
-                            [Sequelize.Op.contains]: [e.expression]
+                            [Sequelize.Op.contains]: e.expression
                         },
                         kana: {
-                            [Sequelize.Op.contains]: [e.reading]
+                            [Sequelize.Op.contains]: e.reading
                         }
                     }
                 });
