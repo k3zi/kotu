@@ -1,0 +1,15 @@
+{
+    "ignore": [
+        "data/**/*.mp3",
+        "data/**/*.zip",
+        "data/**/*.gz",
+        "data/**/*.lastModified",
+        "data/**/*.html",
+        "data/**/*.json",
+        "data/**/*.csv",
+        "data/**/*.csv",
+        "data/**/*.csv",
+        "**/temp/*",
+        "data/examples/audio/*"
+    ]
+}
