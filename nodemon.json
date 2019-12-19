@@ -10,6 +10,7 @@
         "data/**/*.csv",
         "data/**/*.csv",
         "**/temp/*",
+        "data/dictionaries/wisdom/*",
         "data/examples/audio/*"
     ]
 }
