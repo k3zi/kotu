@@ -15,7 +15,7 @@ const sequelize = new Sequelize(config.database.database, config.database.userna
     host: config.database.host,
     dialect: config.database.dialect,
     operatorAliases: Sequelize.Op,
-    logging: true
+    logging: false
 });
 const models = require("../../models");
 const horzBar = '―';
@@ -148,7 +148,7 @@ function addAccent(string, index) {
 }
 
 
-module.exports = (async () => {
+(async () => {
     await models.sequelize.sync();
     console.log('Loaded models.');
     const dictData = require(path.join(__dirname, 'daijirin.json'));
@@ -358,4 +358,4 @@ module.exports = (async () => {
     }, { concurrency: 20 });
 
     console.log('Done.');
-});
+})();
