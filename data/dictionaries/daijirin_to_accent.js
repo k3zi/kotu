@@ -169,6 +169,7 @@ function addAccent(string, index) {
             ]
         }
     });
+    console.log('Deleted existing entries.');
     
     const dictData = require(path.join(__dirname, 'daijirin.json'));
     let s = 0;
