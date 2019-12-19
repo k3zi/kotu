@@ -156,13 +156,13 @@ function addAccent(string, index) {
             [Sequelize.Op.and]: [
                 {
                     sources: {
-                        [Sequelize.Op.contains]: "daijirin3"
+                        [Sequelize.Op.contains]: ["daijirin3"]
                     }
                 },
                 {
                     [Sequelize.Op.not]: {
                         sources: {
-                            [Sequelize.Op.contains]: "nhk1998"
+                            [Sequelize.Op.contains]: ["nhk1998"]
                         }
                     }
                 }
