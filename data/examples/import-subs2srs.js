@@ -125,7 +125,7 @@ const fileExists = async path => !!(await fs.promises.stat(path).catch(e => fals
 
         const example = await models.SentenceExample.create({
             text: japanese,
-            soundPath: newSoundPath
+            soundPath: newSoundFile
         });
 
         await exampleMedia.addSentence(example);
