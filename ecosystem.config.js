@@ -1,7 +1,7 @@
 module.exports = {
     apps : [{
         name: 'Server',
-        script: 'index.js',
+        script: './index.js',
         instances: 1,
         autorestart: true,
         watch: true,
@@ -27,6 +27,7 @@ module.exports = {
         env_production: {
             NODE_ENV: 'production'
         },
+        args: '--port 80'
         node_args: '--max_old_space_size=16384'
     }]
 };
