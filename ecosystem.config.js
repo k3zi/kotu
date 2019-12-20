@@ -27,7 +27,7 @@ module.exports = {
         env_production: {
             NODE_ENV: 'production'
         },
-        args: '--port 80'
+        args: '--port 80',
         node_args: '--max_old_space_size=16384'
     }]
 };
