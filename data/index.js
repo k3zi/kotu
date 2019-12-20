@@ -71,12 +71,11 @@ function addSubFiles(data, passThrough, callback) {
 
            const fuse = new Fuse(siftedData, options);
            const results = fuse.search(q).map(result => {
-
                return {
                    expression: result[0][0],
                    reading: result[1][0],
-                   glossary: result[5][0].replace(/(?:\r\n|\r|\n)/g, '<br />')
-               }
+                   glossary: result[5][0].replace(/(?:\r\n|\r|\n)/g, '<br />').replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "")
+               };
            });
            return {
                provider: d.provider,
