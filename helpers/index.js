@@ -229,7 +229,8 @@ module.exports = function (passThrough) {
                     as: 'media',
                     seperate: true
                 }
-            ]
+            ],
+            limit: 20
         }).map(m => m.get({ plain: true }));
     };
 
